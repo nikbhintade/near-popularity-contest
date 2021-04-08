@@ -10,7 +10,7 @@ describe("contest init", () => {
     })
 
     it("checking default parameters", () => {
-        expect(contest.owner).toBe("senpai.near", "contract owner should be senpai.near")
+        expect(contest.getOwner()).toBe("senpai.near", "contract owner should be senpai.near")
     })
 })
 
@@ -31,7 +31,7 @@ describe("Adding contestants", () => {
     it("checking variables after contest started", () => {
 
         contest.addContestants("test.near", "test1.near", 10);
-        expect(contest.stopContestTime).toBe(Context.blockTimestamp + 10 * 60 * 1000, "block stamp should be 60042")
+        expect(contest.getStopContestTime()).toBe(Context.blockTimestamp + 10 * 60 * 1000, "block stamp should be 60042")
     })
 
     it("contest started can't set contestants", () => {
@@ -40,5 +40,23 @@ describe("Adding contestants", () => {
         expect(() => {
             contest.addContestants("test.near", "test1.near", 10);
         }).toThrow("Contest is in progress")
+    })
+})
+
+describe("voting for contestants", () => {
+    beforeEach(() => {
+        contest = new Popularity("senpai.near")
+    })
+    it("can't vote before contest", () => {
+        expect(() => {
+            contest.vote(1)
+        })
+            .toThrow("contest has not started yet")
+    })
+    it("choice should be 1 or 2", () => {
+        expect(() => {
+            contest.vote(0)
+        })
+            .toThrow("Choice not allowed")
     })
 })
